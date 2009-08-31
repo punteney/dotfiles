@@ -343,8 +343,8 @@ gri () {
 	grep -rs "$@" . | egrep -v '.svn/|CVS/'
 }
 
-alias gci="git commit"
-alias gpu="git pull"
+alias gcm="git commit"
+alias gpl="git pull"
 alias gps="git push --all"
 alias ga="git add"
 alias gst="git status"

@@ -4,4 +4,4 @@
 "\e[D": backward-char
 set completion-ignore-case on
 set visible-stats on
-set show-all-if-ambiguous on
+# set show-all-if-ambiguous on
