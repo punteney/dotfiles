@@ -162,9 +162,6 @@ substitute () {
 	inpath "$1" && new="$(which "$1")" && alias $2="$new"
 }
 
-substitute yssh ssh
-substitute yscp scp
-
 
 #[ -d ~/dev/main/yahoo ] && export SRCTOP=~/dev/main/yahoo 
 
@@ -531,30 +528,30 @@ pushprof () {
 	return $failures
 }
 
-if [ $has_yinst == 1 ]; then
-	alias inst="yinst install"
-	alias yl="yinst ls"
-	yg () {
-		yinst ls | $grep "$@"
-	}
-	ysg () {
-		yinst set | $grep "$@"
-	}
-elif [ -f "$(which port 2>/dev/null)" ]; then
-	alias inst="sudo port install"
-	alias yl="port list installed"
-	yg () {
-		port list '*'"$@"'*'
-	}
-	alias upup="sudo port sync && sudo port upgrade installed"
-elif [ -f "$(which apt-get 2>/dev/null)" ]; then
-	alias inst="sudo apt-get install"
-	alias yl="dpkg --list | egrep '^ii'"
-	yg () {
-		dpkg --list | egrep '^ii' | $grep "$@"
-	}
-	alias upup="sudo apt-get update && sudo apt-get upgrade"
-fi
+# if [ $has_yinst == 1 ]; then
+# 	alias inst="yinst install"
+# 	alias yl="yinst ls"
+# 	yg () {
+# 		yinst ls | $grep "$@"
+# 	}
+# 	ysg () {
+# 		yinst set | $grep "$@"
+# 	}
+# elif [ -f "$(which port 2>/dev/null)" ]; then
+# 	alias inst="sudo port install"
+# 	alias yl="port list installed"
+# 	yg () {
+# 		port list '*'"$@"'*'
+# 	}
+# 	alias upup="sudo port sync && sudo port upgrade installed"
+# elif [ -f "$(which apt-get 2>/dev/null)" ]; then
+# 	alias inst="sudo apt-get install"
+# 	alias yl="dpkg --list | egrep '^ii'"
+# 	yg () {
+# 		dpkg --list | egrep '^ii' | $grep "$@"
+# 	}
+# 	alias upup="sudo apt-get update && sudo apt-get upgrade"
+# fi
 
 
 
@@ -589,6 +586,8 @@ gri () {
 alias gci="git commit"
 alias gpu="git pull"
 alias gps="git push --all"
+alias ga="git add"
+alias gst="git status"
 gpm () {
 	git pull $1 master
 }
@@ -679,8 +678,8 @@ t=""
 echo ""
 echo -ne "\033[0m\033]0;$t${HOSTNAME_FIRSTPART%%\.*}:$DIR\007"
 [ "$TITLE" ] && echo -ne "\033[${_color}m\033[${_bg}m $TITLE \033[0m"
-echo -ne "\033[1;41m ${HOSTNAME_FIRSTPART} \033[0m:$DIR \033[1;30m\033[40m$((__svn_ps1;__git_ps1 " %s ") 2>/dev/null)\033[0m"'
-PS1='\n[\t \u] \\$ '
+echo -ne "\033[0;34m${HOSTNAME_FIRSTPART} \033[0m:$DIR \033[0;32m\033[40m$((__svn_ps1;__git_ps1 " %s ") 2>/dev/null)\033[0m"'
+PS1='\n[\u] \\$ '
 #this part gets repeated when you tab to see options
 # \n[\t \u] \\$ "
 # PS1=' '$PS1
