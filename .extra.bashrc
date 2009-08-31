@@ -41,7 +41,7 @@ if ! [ -f "$HOME" ]; then
 	export HOME="$(echo ~)"
 fi
 
-path=$HOME/bin:$HOME/scripts:/home/y/bin:/opt/local/sbin:/opt/local/bin:/opt/local/libexec:/opt/local/apache2/bin:/opt/local/lib/mysql/bin:/opt/local/lib/erlang/bin:/usr/local/sbin:/usr/local/bin:/usr/local/libexec:/usr/sbin:/usr/bin:/usr/libexec:/sbin:/bin:/libexec:/usr/X11R6/bin:/home/y/include:/opt/local/share/mysql5/mysql:/usr/local/mysql/bin:/opt/local/include:/opt/local/apache2/include:/usr/local/include:/usr/include:/usr/X11R6/include:$HOME/dev/jack/narwhal/bin:$HOME/dev/jack/jack/bin:/opt/local/etc/LaunchDaemons/org.macports.lighttpd/
+path=$HOME/bin:$HOME/scripts:/opt/local/sbin:/opt/local/bin:/opt/local/libexec:/usr/local/sbin:/usr/local/bin:/usr/local/libexec:/usr/sbin:/usr/bin:/usr/libexec:/sbin:/bin:/libexec:/usr/X11R6/bin:/opt/local/include:/usr/local/include:/usr/include:/usr/X11R6/include
 ! [ -d ~/bin ] && mkdir ~/bin
 path_elements="${path//:/ }"
 path=""
@@ -51,7 +51,6 @@ done
 export PATH=$(path=$(echo $path); echo ${path// /:})
 unset path
 
-export CLASSPATH=./:~/dev/rhino/build/classes:~/dev/fcgi/fcgi-2.4.0/java
 
 # Use UTF-8, and throw errors in PHP and Perl if it's not available.
 # Note: this is VERY obnoxious if UTF8 is not available!
@@ -60,7 +59,7 @@ export LC_CTYPE=en_US.UTF-8
 export LC_ALL=""
 export LANG=$LC_CTYPE
 export LANGUAGE=$LANG
-export TZ=America/Los_Angeles
+export TZ=America/New_York
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000000
 
@@ -70,7 +69,7 @@ shopt -s histappend
 # don't be so prickly about spelling
 shopt -s cdspell
 
-export CDPATH=.:..:$HOME/dev:$HOME
+export CDPATH=.:..:$HOME/projects:$HOME
 
 alias ..="cd .."
 
@@ -135,17 +134,17 @@ foreach () {
 }
 
 # test javascript files for syntax errors.
-if inpath yuicompressor; then
-	testjs () {
-		for i in $(find . -name "*.js"); do
-			err="$(yuicompressor -o /dev/null $i 2>/dev/stdout)"
-			if [ "$err" != "" ]; then
-				echo "$i has errors:"
-				echo "$err"
-			fi
-		done
-	}
-fi
+#if inpath yuicompressor; then
+#	testjs () {
+#		for i in $(find . -name "*.js"); do
+#			err="$(yuicompressor -o /dev/null $i 2>/dev/stdout)"
+#			if [ "$err" != "" ]; then
+#				echo "$i has errors:"
+#				echo "$err"
+#			fi
+#		done
+#	}
+#fi
 
 # give a little colou?r to grep commands, if supported
 grep=grep
@@ -166,15 +165,11 @@ substitute () {
 substitute yssh ssh
 substitute yscp scp
 
-export CVSROOT=vault.yahoo.com:/CVSROOT
-export CVS_RSH=$(choose_first yssh ssh)
-export SVN_RSH=$(choose_first yssh ssh)
-export RSYNC_RSH=$(choose_first yssh ssh)
 
-[ -d ~/dev/main/yahoo ] && export SRCTOP=~/dev/main/yahoo 
+#[ -d ~/dev/main/yahoo ] && export SRCTOP=~/dev/main/yahoo 
 
-has_yinst=0
-inpath yinst && has_yinst=1
+#has_yinst=0
+#inpath yinst && has_yinst=1
 
 # useful commands:
 _set_editor () {
@@ -190,9 +185,9 @@ _set_editor () {
 	alias sued="sudo $edit_cmd"
 }
 # my list of editors, by preference.
-_set_editor mate vim vi pico ed
+_set_editor mate nano pico vim vi ed
 unset _set_editor
-alias js="rlwrap narwhal"
+#alias js="rlwrap narwhal"
 
 # shebang <file> <program> [<args>]
 shebang () {
@@ -226,31 +221,31 @@ shebang () {
 }
 
 # Probably a better way to do this, but whatevs.
-rand () {
-	echo $(php -r 'echo mt_rand();')
-}
+#rand () {
+#	echo $(php -r 'echo mt_rand();')
+#}
 
-pickrand () {
-	cnt=0
-	if [ $# == 1 ]; then
-		tst=$1
-	else
-		tst="-d"
-	fi
-	for i in *; do
-		[ $tst "$i" ] && let 'cnt += 1'
-	done
-	r=$(rand)
-	p=0
-	[ $cnt -eq 0 ] && return 1
-	let 'p = r % cnt'
-	# echo "[$cnt $r --- $p]"
-	cnt=0
-	for i in *; do
-		# echo "[$cnt]"
-		[ $tst "$i" ] && let 'cnt += 1' && [ $cnt -eq $p ] && echo "$i" && return
-	done
-}
+#pickrand () {
+#	cnt=0
+#	if [ $# == 1 ]; then
+#       tst=$1
+#   else
+#       tst="-d"
+#   fi
+#   for i in *; do
+#       [ $tst "$i" ] && let 'cnt += 1'
+#   done
+#   r=$(rand)
+#   p=0
+#   [ $cnt -eq 0 ] && return 1
+#   let 'p = r % cnt'
+#   # echo "[$cnt $r --- $p]"
+#   cnt=0
+#   for i in *; do
+#       # echo "[$cnt]"
+#       [ $tst "$i" ] && let 'cnt += 1' && [ $cnt -eq $p ] && echo "$i" && return
+#   done
+# }
 
 
 # md5 from the command line
@@ -258,179 +253,179 @@ pickrand () {
 # Ported here to always have it.
 # Yeah, that's right.  My bash profile has a PHP program embedded
 # inside. You wanna fight about it?
-if ! inpath md5 && inpath php; then
-	# careful on this next trick. The php code can *not* use single-quotes.
-	echo  '<?php
-		// The BSD md5 checksum program, ported to PHP by Isaac Z. Schlueter
-		
-		exit main($argc, $argv);
-		
-		function /* int */ main ($argc, $argv) {
-			global $bin;
-			$return = true;
-			$bin = basename( array_shift($argv) );
-			$return = 0;
-			foreach (parseargs($argv, $argc) as $target => $action) {
-				// echo "$action($target)\n";
-				if ( !$action( $target ) ) {
-					$return ++;
-				}
-			}
-			// convert to bash success/failure flag
-			return $return;
-		}
-
-		function parseargs ($argv, $argc) {
-			$actions = array();
-			$getstring = false;
-			$needstdin = true;
-			foreach ($argv as $arg) {
-				// echo "arg: $arg\n";
-				if ($getstring) {
-					$getstring = false;
-					$actions[ "\"$arg\"" ] = "cksumString";
-					continue;
-				}
-				if ($arg[0] !== "-") {
-					// echo "setting $arg to cksumFile\n";
-					$needstdin = false;
-					$actions[$arg] = "cksumFile";
-				} else {
-					// is a flag
-					$arg = substr($arg, 1);
-					if (strlen($arg) === 0) {
-						$actions["-"] = "cksumFile";
-					} else {
-						while (strlen($arg)) {
-							$flag = $arg{0};
-							$arg = substr($arg, 1);
-							switch ($flag) {
-								case "s": 
-									if ($arg) {
-										$actions["\"$arg\""] = "cksumString";
-										$arg = "";
-									} else {
-										$getstring = true;
-									}
-									$needstdin = false;
-								break;
-								case "p": $actions[] = "cksumStdinPrint"; $needstdin = false; break;
-								case "q": flag("quiet", true); break;
-								case "r": flag("reverse",true); break;
-								case "t": $actions["timeTrial"] = "timeTrial"; $needstdin = false; break;
-								case "x": $actions["runTests"] = "runTests"; $needstdin = false; break;
-								default : $actions["$flag"] = "usage"; $needstdin = false; break;
-							} // switch
-						} // while
-					} // strlen($arg)
-				}
-			} // end foreach
-			if ($getstring) {
-				global $bin;
-				// exited without getting a string!
-				error_log("$bin: option requires an argument -- s");
-				usage();
-			}
-			if ($needstdin) {
-				$actions[] = "cksumStdin";
-			}
-			return $actions;
-		}
-
-		/*
-		-s string
-			Print a checksum of the given string.
-		-p
-			Echo stdin to stdout and appends the MD5 sum to stdout.
-		-q
-			Quiet mode - only the MD5 sum is printed out.  Overrides the -r option.
-		-r
-			Reverses the format of the output.  This helps with visual diffs.
-			Does nothing when combined with the -ptx options.
-		-t
-			Run a built-in time trial.
-		-x
-			Run a built-in test script.
-		*/
-
-		function cksumFile ($file) {
-			$missing = !file_exists($file);
-			$isdir = $missing ? 0 : is_dir($file); // only call if necessary
-			if ( $missing || $isdir ) {
-				global $bin;
-				error_log("$bin: $file: " . ($missing ? "No such file or directory" : "is a directory."));
-				// echo "bout to return\n";
-				return false;
-			}
-			output("MD5 (%s) = %s", $file, md5(file_get_contents($file)));
-		}
-		function cksumStdin () {
-			$stdin = file_get_contents("php://stdin");
-			writeln(md5($stdin));
-			return true;
-		}
-		function cksumStdinPrint () {
-			$stdin = file_get_contents("php://stdin");
-			output("%s%s", $stdin, md5($stdin), array("reverse"=>false));
-			return true;
-		}
-
-		function cksumString ($str) {
-			return output("MD5 (%s) = %s", $str, md5(substr($str,1,-1)));
-		}
-		function runTests () {
-			writeln("MD5 test suite:");
-			$return = true;
-			foreach (array(
-					"", "a", "abc", "message digest", "abcdefghijklmnopqrstuvwxyz",
-					"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-					"12345678901234567890123456789012345678901234567890123456789012345678901234567890") as $str ) {
-				$return = $return && cksumString("\"$str\"");
-			}
-			return $return;
-		}
-		function timeTrial () {
-			error_log("Time trial not supported in this version.");
-			return false;
-		}
-		function flag ($flag, $set = null) {
-			static $flags = array();
-			$f = in_array($flag, $flags) ? $flags[$flag] : ($flags[$flag] = false);
-			return ($set === null) ? $f : (($flags[$flag] = (bool)$set) || true) && $f;
-		}
-		
-		function usage ($option = "") {
-			global $bin;
-			if (!empty($option)) {
-				error_log("$bin: illegal option -- $option");
-			}
-			writeln("usage: $bin [-pqrtx] [-s string] [files ...]");
-			return false;
-		}
-		function output ($format, $input, $digest, $flags = array()) {
-			$orig_flags = array();
-			foreach ($flags as $flag => $value) {
-				$orig_flags[$flag] = flag($flag);
-				flag($flag, $value);
-			}
-			if ( flag("quiet") ) {
-				writeln($digest);
-			} elseif ( flag("reverse") ) {
-				writeln( "$digest $input" );
-			} else {
-				writeln( sprintf($format, $input, $digest) );
-			}
-			foreach ($orig_flags as $flag=>$value) {
-				flag($flag, $value);
-			}
-			return true;
-		}
-		function writeln ($str) {
-			echo "$str\n";
-		}
-	?>'>~/bin/md5
-	shebang ~/bin/md5 php "-d open_basedir="
-fi
+# if ! inpath md5 && inpath php; then
+#   # careful on this next trick. The php code can *not* use single-quotes.
+#   echo  '<?php
+#       // The BSD md5 checksum program, ported to PHP by Isaac Z. Schlueter
+#       
+#       exit main($argc, $argv);
+#       
+#       function /* int */ main ($argc, $argv) {
+#           global $bin;
+#           $return = true;
+#           $bin = basename( array_shift($argv) );
+#           $return = 0;
+#           foreach (parseargs($argv, $argc) as $target => $action) {
+#               // echo "$action($target)\n";
+#               if ( !$action( $target ) ) {
+#                   $return ++;
+#               }
+#           }
+#           // convert to bash success/failure flag
+#           return $return;
+#       }
+# 
+#       function parseargs ($argv, $argc) {
+#           $actions = array();
+#           $getstring = false;
+#           $needstdin = true;
+#           foreach ($argv as $arg) {
+#               // echo "arg: $arg\n";
+#               if ($getstring) {
+#                   $getstring = false;
+#                   $actions[ "\"$arg\"" ] = "cksumString";
+#                   continue;
+#               }
+#               if ($arg[0] !== "-") {
+#                   // echo "setting $arg to cksumFile\n";
+#                   $needstdin = false;
+#                   $actions[$arg] = "cksumFile";
+#               } else {
+#                   // is a flag
+#                   $arg = substr($arg, 1);
+#                   if (strlen($arg) === 0) {
+#                       $actions["-"] = "cksumFile";
+#                   } else {
+#                       while (strlen($arg)) {
+#                           $flag = $arg{0};
+#                           $arg = substr($arg, 1);
+#                           switch ($flag) {
+#                               case "s": 
+#                                   if ($arg) {
+#                                       $actions["\"$arg\""] = "cksumString";
+#                                       $arg = "";
+#                                   } else {
+#                                       $getstring = true;
+#                                   }
+#                                   $needstdin = false;
+#                               break;
+#                               case "p": $actions[] = "cksumStdinPrint"; $needstdin = false; break;
+#                               case "q": flag("quiet", true); break;
+#                               case "r": flag("reverse",true); break;
+#                               case "t": $actions["timeTrial"] = "timeTrial"; $needstdin = false; break;
+#                               case "x": $actions["runTests"] = "runTests"; $needstdin = false; break;
+#                               default : $actions["$flag"] = "usage"; $needstdin = false; break;
+#                           } // switch
+#                       } // while
+#                   } // strlen($arg)
+#               }
+#           } // end foreach
+#           if ($getstring) {
+#               global $bin;
+#               // exited without getting a string!
+#               error_log("$bin: option requires an argument -- s");
+#               usage();
+#           }
+#           if ($needstdin) {
+#               $actions[] = "cksumStdin";
+#           }
+#           return $actions;
+#       }
+# 
+#       /*
+#       -s string
+#           Print a checksum of the given string.
+#       -p
+#           Echo stdin to stdout and appends the MD5 sum to stdout.
+#       -q
+#           Quiet mode - only the MD5 sum is printed out.  Overrides the -r option.
+#       -r
+#           Reverses the format of the output.  This helps with visual diffs.
+#           Does nothing when combined with the -ptx options.
+#       -t
+#           Run a built-in time trial.
+#       -x
+#           Run a built-in test script.
+#       */
+# 
+#       function cksumFile ($file) {
+#           $missing = !file_exists($file);
+#           $isdir = $missing ? 0 : is_dir($file); // only call if necessary
+#           if ( $missing || $isdir ) {
+#               global $bin;
+#               error_log("$bin: $file: " . ($missing ? "No such file or directory" : "is a directory."));
+#               // echo "bout to return\n";
+#               return false;
+#           }
+#           output("MD5 (%s) = %s", $file, md5(file_get_contents($file)));
+#       }
+#       function cksumStdin () {
+#           $stdin = file_get_contents("php://stdin");
+#           writeln(md5($stdin));
+#           return true;
+#       }
+#       function cksumStdinPrint () {
+#           $stdin = file_get_contents("php://stdin");
+#           output("%s%s", $stdin, md5($stdin), array("reverse"=>false));
+#           return true;
+#       }
+# 
+#       function cksumString ($str) {
+#           return output("MD5 (%s) = %s", $str, md5(substr($str,1,-1)));
+#       }
+#       function runTests () {
+#           writeln("MD5 test suite:");
+#           $return = true;
+#           foreach (array(
+#                   "", "a", "abc", "message digest", "abcdefghijklmnopqrstuvwxyz",
+#                   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+#                   "12345678901234567890123456789012345678901234567890123456789012345678901234567890") as $str ) {
+#               $return = $return && cksumString("\"$str\"");
+#           }
+#           return $return;
+#       }
+#       function timeTrial () {
+#           error_log("Time trial not supported in this version.");
+#           return false;
+#       }
+#       function flag ($flag, $set = null) {
+#           static $flags = array();
+#           $f = in_array($flag, $flags) ? $flags[$flag] : ($flags[$flag] = false);
+#           return ($set === null) ? $f : (($flags[$flag] = (bool)$set) || true) && $f;
+#       }
+#       
+#       function usage ($option = "") {
+#           global $bin;
+#           if (!empty($option)) {
+#               error_log("$bin: illegal option -- $option");
+#           }
+#           writeln("usage: $bin [-pqrtx] [-s string] [files ...]");
+#           return false;
+#       }
+#       function output ($format, $input, $digest, $flags = array()) {
+#           $orig_flags = array();
+#           foreach ($flags as $flag => $value) {
+#               $orig_flags[$flag] = flag($flag);
+#               flag($flag, $value);
+#           }
+#           if ( flag("quiet") ) {
+#               writeln($digest);
+#           } elseif ( flag("reverse") ) {
+#               writeln( "$digest $input" );
+#           } else {
+#               writeln( sprintf($format, $input, $digest) );
+#           }
+#           foreach ($orig_flags as $flag=>$value) {
+#               flag($flag, $value);
+#           }
+#           return true;
+#       }
+#       function writeln ($str) {
+#           echo "$str\n";
+#       }
+#   ?>'>~/bin/md5
+#   shebang ~/bin/md5 php "-d open_basedir="
+# fi
 
 # a friendlier delete on the command line
 ! [ -d ~/.Trash ] && mkdir ~/.Trash
@@ -458,9 +453,9 @@ if [ "$TERM" != "dumb" ] && [ -f "$(which dircolors 2>/dev/null)" ]; then
 fi
 ls_cmd="ls$lscolor"
 alias ls="$ls_cmd"
-alias la="$ls_cmd -laF"
-alias lal="$ls_cmd -laFL"
-alias ll="$ls_cmd -lF"
+alias la="$ls_cmd -laFh"
+alias lal="$ls_cmd -laFLh"
+alias ll="$ls_cmd -lFh"
 alias ag="alias | $grep"
 fn () {
 	func=$(set | egrep '^[a-zA-Z0-9_-]+ ()' | egrep -v '^_' | awk '{print $1}' | grep "$1")
@@ -502,10 +497,10 @@ fi
 alias yapr="$yapr"
 
 
-error_log="$(choose_first /opt/local/var/log/lighttpd/error.log /home/y/logs/yapache/php-error /home/y/logs/yapache/error /home/y/logs/yapache/error_log /home/y/logs/yapache/us/error_log /home/y/logs/yapache/us/error /opt/local/apache2/logs/error_log /var/log/httpd/error_log /var/log/httpd/error)"
-yapl="tail -f $error_log | egrep -v '^E|udbClient'"
-alias yaprl="$yapr;$yapl"
-alias yapl="$yapl"
+#error_log="$(choose_first /opt/local/var/log/lighttpd/error.log /home/y/logs/yapache/php-error /home/y/logs/yapache/error /home/y/logs/yapache/error_log /home/y/logs/yapache/us/error_log /home/y/logs/yapache/us/error /opt/local/apache2/logs/error_log /var/log/httpd/error_log /var/log/httpd/error)"
+#yapl="tail -f $error_log | egrep -v '^E|udbClient'"
+#alias yaprl="$yapr;$yapl"
+#alias yapl="$yapl"
 
 prof () {
 	. ~/.extra.bashrc
@@ -564,59 +559,6 @@ fi
 
 
 
-#cvs stuff
-#more in .bash_extra_Darwin
-clearconflicts () {
-	edit=""
-	clear=""
-	for i in $(cvs up | egrep '^C' | egrep -o '[^C\ ].*$'); do
-		if [ -f "$i" ]; then
-			echo ""
-			echo -n "$i - what to do? (C)lean copy, (E)dit, (S)kip (skip) "
-			read -n 1 action
-			if [ "$action" == "C" ] || [ "$action" == "c" ]; then
-				echo ""
-				echo "clearit!"
-				clear="$clear $i"
-			elif [ "$action" == "E" ] || [ "$action" == "e" ]; then
-				edit="$edit $i"
-			fi
-		fi
-	done
-	if ! [ "$clear" == "" ]; then
-		for i in $clear; do
-			rm -rf $clear
-		done
-		cvs up -dPC $clear
-	fi
-	#echo "editing: [[[$edit]]]"
-	if ! [ "$edit" == "" ]; then
-		edit $edit
-	fi
-}
-
-cvsunknown () {
-	for i in $(uq); do
-		if [ -f "$i" ]; then
-			echo ""
-			echo -n "$i - what to do? (R)emove, (S)kip (skip) "
-			read -n 1 action
-			if [ "$action" == "R" ] || [ "$action" == "r" ]; then
-				rm -rf $i
-			fi
-		fi
-	done
-}
-
-diffless () {
-  cvs diff "$@" | less
-}
-alias cu="cvs up"
-alias ug="cvs up | egrep '^[^\?]'"
-alias um="cvs up | egrep '^(M|A)' | egrep -o '[^MA\ ].*$'"
-alias uq="cvs up | egrep '^\?' | egrep -o '[^\?\ ].*$'"
-alias cci="cvs ci"
-
 alias sci="svn ci"
 alias sg="svn up"
 alias sq="svn status | egrep '^\?' | egrep -o '[^\?\ ].*$'"
@@ -650,16 +592,6 @@ alias gps="git push --all"
 gpm () {
 	git pull $1 master
 }
-
-addcommit () {
-	cvs add "$@"
-	cvs commit "$@"
-}
-cvsrm () {
-	rm "$@"
-	cvs rm "$@"
-}
-alias cvsrev="cvs update -f -r "
 
 # look up a word
 dict () {
@@ -762,11 +694,11 @@ pid () {
 	pg "$@" | awk '{print $2}'
 }
 
-alias v="ssh visitbread.corp.yahoo.com"
-alias vm="ssh visitbread-vm0.corp.yahoo.com"
-alias fh="ssh foohack.com"
-alias p="ssh isaacs.xen.prgmr.com"
-alias st="ssh sistertrain.com"
+# alias v="ssh visitbread.corp.yahoo.com"
+# alias vm="ssh visitbread-vm0.corp.yahoo.com"
+# alias fh="ssh foohack.com"
+# alias p="ssh isaacs.xen.prgmr.com"
+# alias st="ssh sistertrain.com"
 
 
 sshagents () {
@@ -862,49 +794,49 @@ cr () {
 
 # tarsnap wrappers.
 # http://tarsnap.com
-ts () {
-	e=echo
-	inpath growlnotify && e="growlnotify -t tarsnap -m "
-	if [ $# -lt 1 ] || ! [ -e "$1" ]; then
-		$e "Need to supply a file/directory to back up" > /dev/stderr
-		return 1
-	fi
-	if [ $# -gt 1 ]; then
-		errors=0
-		for i in "$@"; do
-			ts $i || let 'errors += 1'
-		done
-		return $errors
-	fi
-	thetitle=$(title)
-	thefile="$1"
-	$e "backing up $thefile"
-	title "backing up $thefile"
-	backupfile="$(hostname):${thefile/\//}:$(date +%Y-%m-%d-%H-%M-%S)"
-	backupfile=${backupfile//\//-}
-	tarsnap -cvf "$backupfile" $thefile 2> ~/.tslog
-	$e "done backing up $thefile"
-	title "$thetitle"
-}
-tsbg () {
-	( ts "$@" ) &
-}
-tsh () {
-	# headless <command> [<key>]
-	headless "ts $@" ts-headless-backup
-}
-tskill () {
-	kill -s SIGQUIT $(pid tarsnap)
-}
-tsabort () {
-	kill $(pid tarsnap)
-}
-tslisten () {
-	tail -f ~/.tslog
-}
-tsl () {
-	tslisten
-}
+# ts () {
+#   e=echo
+#   inpath growlnotify && e="growlnotify -t tarsnap -m "
+#   if [ $# -lt 1 ] || ! [ -e "$1" ]; then
+#       $e "Need to supply a file/directory to back up" > /dev/stderr
+#       return 1
+#   fi
+#   if [ $# -gt 1 ]; then
+#       errors=0
+#       for i in "$@"; do
+#           ts $i || let 'errors += 1'
+#       done
+#       return $errors
+#   fi
+#   thetitle=$(title)
+#   thefile="$1"
+#   $e "backing up $thefile"
+#   title "backing up $thefile"
+#   backupfile="$(hostname):${thefile/\//}:$(date +%Y-%m-%d-%H-%M-%S)"
+#   backupfile=${backupfile//\//-}
+#   tarsnap -cvf "$backupfile" $thefile 2> ~/.tslog
+#   $e "done backing up $thefile"
+#   title "$thetitle"
+# }
+# tsbg () {
+#   ( ts "$@" ) &
+# }
+# tsh () {
+#   # headless <command> [<key>]
+#   headless "ts $@" ts-headless-backup
+# }
+# tskill () {
+#   kill -s SIGQUIT $(pid tarsnap)
+# }
+# tsabort () {
+#   kill $(pid tarsnap)
+# }
+# tslisten () {
+#   tail -f ~/.tslog
+# }
+# tsl () {
+#   tslisten
+# }
 
 
 #load any per-platform .extra.bashrc files.
