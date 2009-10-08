@@ -349,7 +349,7 @@ alias gps="git push --all"
 alias ga="git add"
 alias gst="git status"
 alias gdf="git diff"
-
+alias gdiff="git diff"
 gpm () {
 	git pull $1 master
 }
