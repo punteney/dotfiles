@@ -483,13 +483,15 @@ fetch_to () {
 alias mkdir='mkdir -p' #creates directories recursively
 export DISPLAY=:0.0
 
-# Django aliases
-#alias dserver='django-admin.py runserver 0.0.0.0:8000'
-#alias dshell='django-admin.py shell'
-
 # Virtualenv wrapper settings
 export WORKON_HOME=$HOME/.virtualenvs
 source /usr/local/bin/virtualenvwrapper_bashrc
+
+# Django aliases
+alias gr='workon gr'
+alias grshell='workon gr;dshell'
+alias grserv='workon gr;dserv'
+alias gradmin='workon gr;dadmin'
 
 #load any per-platform .extra.bashrc files.
 arch=$(uname -s);
