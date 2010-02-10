@@ -1,5 +1,5 @@
 [user]
-	email = james@geniusrocket.com
+	email = punteney@gmail.com
 	name = James Punteney
 [alias]
 	ci = commit
@@ -25,3 +25,5 @@
 	added = yellow
 	changed = green
 	untracked = cyan
+[core]
+	excludesfile = /Users/james/.gitignore

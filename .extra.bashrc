@@ -471,26 +471,6 @@ vazu () {
 }
 
 
-repeat () {
-	if [ "$2" == "" ]; then
-		delay=1
-	else
-		delay=$2
-	fi
-	while sleep $delay; do
-		clear
-		date +%s
-		$1
-	done
-}
-
-# floating-point calculations
-calc () {
-	expression="$@"
-	[ "${expression:0:6}" != "scale=" ] && expression="scale=16;$expression"
-	echo "$expression" | bc
-}
-
 # more persistent wget for fetching files to a specific filename.
 fetch_to () {
 	[ $# -ne 2 ] && echo "usage: fetch_to <url> <filename>" && return 1
@@ -499,31 +479,13 @@ fetch_to () {
 	wget -U "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.5; en-US; rv:1.9.0.5) Gecko/2008120121 Firefox/3.0.5" -O "$fname" $urltofetch
 }
 
-# command-line perl prog
-alias pie="perl -pi -e "
-
-# c++ compile
-stripc () {
-	f="$1"
-	o="$f"
-	o=${o%.c}
-	o=${o%.cpp}
-	o=${o%.cc}
-	echo $o
-}
-cm () {
-	g++ -o $(stripc "$1") "$1"
-}
-cr () {
-	cm "$1" && ./$(stripc "$1")
-}
 
 alias mkdir='mkdir -p' #creates directories recursively
 export DISPLAY=:0.0
 
 # Django aliases
-alias dserver='django-admin.py runserver 0.0.0.0:8000'
-alias dshell='django-admin.py shell'
+#alias dserver='django-admin.py runserver 0.0.0.0:8000'
+#alias dshell='django-admin.py shell'
 
 # Virtualenv wrapper settings
 export WORKON_HOME=$HOME/.virtualenvs
