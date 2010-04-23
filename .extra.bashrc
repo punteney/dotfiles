@@ -355,6 +355,15 @@ gpm () {
 	git pull $1 master
 }
 
+# Change directory to a where a python module resides
+# cdp subprocess
+cdp () {
+  cd "$(python -c "import os.path as _, ${1}; \
+    print _.dirname(_.realpath(${1}.__file__[:-1]))"
+  )"
+}
+
+
 # look up a word
 dict () {
 	curl -s dict://dict.org/d:$1 | perl -ne 's/\r//; last if /^\.$/; print if /^151/../^250/' | more
