@@ -1,5 +1,5 @@
 ######
-# .extra.bashrc - Isaac's Bash Extras
+# .extra.bashrc - James' Bash Extras
 # This file is designed to be a drop-in for any machine that I log into.
 # Currently, that means it has to work under Darwin, Ubuntu, and yRHEL
 # 
@@ -41,7 +41,7 @@ if ! [ -f "$HOME" ]; then
 	export HOME="$(echo ~)"
 fi
 
-path=$HOME/bin:$HOME/scripts:/opt/local/sbin:/opt/local/bin:/opt/local/libexec:/usr/local/sbin:/usr/local/bin:/usr/local/libexec:/usr/sbin:/usr/bin:/usr/libexec:/sbin:/bin:/libexec:/usr/X11R6/bin:/opt/local/include:/usr/local/include:/usr/include:/usr/X11R6/include:/Library/PostgreSQL/8.4/bin:$PATH
+path=$HOME/bin:$HOME/scripts:/opt/local/sbin:/opt/local/bin:/opt/local/libexec:/usr/local/sbin:/usr/local/bin:/usr/local/libexec:/usr/sbin:/usr/bin:/usr/libexec:/sbin:/bin:/libexec:/usr/X11R6/bin:/opt/local/include:/usr/local/include:/usr/include:/usr/X11R6/include:$PATH
 ! [ -d ~/bin ] && mkdir ~/bin
 path_elements="${path//:/ }"
 path=""
@@ -133,20 +133,7 @@ foreach () {
 	done
 }
 
-# test javascript files for syntax errors.
-#if inpath yuicompressor; then
-#	testjs () {
-#		for i in $(find . -name "*.js"); do
-#			err="$(yuicompressor -o /dev/null $i 2>/dev/stdout)"
-#			if [ "$err" != "" ]; then
-#				echo "$i has errors:"
-#				echo "$err"
-#			fi
-#		done
-#	}
-#fi
-
-# give a little colou?r to grep commands, if supported
+# give a little color to grep commands, if supported
 grep=grep
 if [ "$(grep --help | grep color)" != "" ]; then
 	grep="grep --color"
@@ -263,29 +250,6 @@ wh () {
 
 #make tree a little cooler looking.
 alias tree="tree -CAFa -I 'CVS|rhel.*.*.package|.svn|.git' --dirsfirst"
-
-if [ "$has_yinst" == 1 ]; then
-	# echo "has yinst = $has_yinst"
-	yapr="yinst restart yapache"
-elif inpath lighttpd.wrapper; then
-	yapr="sudo lighttpd.wrapper restart"
-elif [ -f /etc/init.d/lighttpd ]; then
-	yapr="sudo /etc/init.d/lighttpd reload"
-elif inpath apache2ctl; then
-	yapr="sudo apache2ctl graceful"
-elif inpath apachectl; then
-	yapr="sudo apachectl graceful"
-else
-	# very strange!
-	yapr="echo Looks like lighttpd and apache are not installed."
-fi
-alias yapr="$yapr"
-
-
-#error_log="$(choose_first /opt/local/var/log/lighttpd/error.log /home/y/logs/yapache/php-error /home/y/logs/yapache/error /home/y/logs/yapache/error_log /home/y/logs/yapache/us/error_log /home/y/logs/yapache/us/error /opt/local/apache2/logs/error_log /var/log/httpd/error_log /var/log/httpd/error)"
-#yapl="tail -f $error_log | egrep -v '^E|udbClient'"
-#alias yaprl="$yapr;$yapl"
-#alias yapl="$yapl"
 
 prof () {
 	. ~/.extra.bashrc
@@ -475,11 +439,6 @@ agent () {
 	ssh-add
 }
 
-vazu () {
-	rsync -vazuR --stats --no-implied-dirs --delete --exclude=".*\.svn.*" "$@"
-}
-
-
 # more persistent wget for fetching files to a specific filename.
 fetch_to () {
 	[ $# -ne 2 ] && echo "usage: fetch_to <url> <filename>" && return 1
@@ -494,7 +453,7 @@ export DISPLAY=:0.0
 
 # Virtualenv wrapper settings
 export WORKON_HOME=$HOME/.virtualenvs
-source /usr/local/bin/virtualenvwrapper_bashrc
+source /usr/local/bin/virtualenvwrapper.sh
 
 # Django aliases
 alias gr='workon gr'
